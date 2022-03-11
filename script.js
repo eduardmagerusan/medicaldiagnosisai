@@ -84,7 +84,7 @@ defaultBtn.addEventListener("change", function(){
 
   // Only process image files.
   var extension = file.name.substring(file.name.lastIndexOf('.'));
-  var validFileType = ".jpg , .png , .dcm";
+  var validFileType = ".jpg , .jpeg, .png, .dcm";
   if (validFileType.toLowerCase().indexOf(extension) < 0) {
       alert("Please select a valid file type. The supported file types are .jpg , .png , .dcm");
       return false;
