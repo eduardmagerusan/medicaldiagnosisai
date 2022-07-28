@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+        <link rel="icon" type="image/x-icon" href="static/img/brainicon.ico">
+        <link rel="apple-touch-icon" type="image/x-icon" href="static/img/brainicon.ico">
+        <link rel="shortcut icon" href="static/img/brainicon.ico">
+
+        <title>aimedicaldiagnosis</title>
+    </head>
+
+    <body>
+        <div class="container">
+            <div id="sidebar">
+              <a href="" class="brand">
+                <i class="bx bxs-brain"></i>
+                <span class="text">AI Medical Diagnosis</span>
+              </a>
+              <ul class="side-menu top">
+                <li class="active">
+                  <a href="#">
+                    <i class="bx bxs-dashboard"></i>
+                    <span class="text">Dashboard</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    <i class="bx bxs-user"></i>
+                    <span class="text">Patient's</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    <i class="bx bxs-cog" ></i>
+                    <span class="text">Settings</span>
+                  </a>
+                </li>
+              </ul>
+              <ul class="side-menu">
+                <li>
+                  <a href="#" class="logout">
+                    <i class="bx bx-log-out" ></i>
+                    <span class="text">Logout</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div class="content-container" id="content">
+                <nav id="navbar">
+                  <i class="bx bx-menu" ></i>
+                  <a href="#" class="profile">
+                    <img src="static/img/profile-icon.jpg">
+                  </a>
+                </nav>
+
+                <div class="head-title">
+                  <div class="left">
+                    <h1>
+                      <p>Hello,</p>
+                      <p>Eduard Magerusan</p>
+                    </h1>
+                    <ul class="breadcrumb">
+                      <li>
+                        <a href="#">Dashboard</a>
+                      </li>
+                      <li><i class="bx bx-chevron-right"></i></li>
+                      <li>
+                        <a class="active" href="#">Home</a>
+                      </li>
+                    </ul>
+                  </div>
+                  <a href="#" class="btn-download">
+                    <i class="bx bxs-cloud-download"></i>
+                    <span class="text">Download PDF</span>
+                  </a>
+                </div>
+
+                <div id="content1">
+                  <ul class="box-info-img">
+                    <li>
+                      <span class="box-info">
+                        <h3>Patient Information</h3>
+                        <p>
+                        <div>Patient ID</div>
+                        <input type="text" id="patient-id" name="username" align="left">
+                        </p>
+                        <p>
+                        <div>Patient Name</div>
+                        <input type="text" id="patient-name" name="title" align="left">
+                        </p>
+                        <p>
+                        <div>Patient Age</div>
+                        <input type="text" id="patient-age" name="username" align="left">
+                        </p>
+                        <p>
+                        <div>Patient Sex</div>
+                        <input type="text" id="patient-sex" name="username" align="left">
+                        </p>
+                        <p>
+                        <div>Imaging Center</div>
+                        <input type="text" id="imaging-center" name="username" align="left">
+                        </p>
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div id="content2">
+                  <div class="wrapper">
+                    <div class="image">
+                      {% if filename %}
+                          <img src="{{ url_for('display_image', filename=filename) }}">
+                      {% else %}
+                          <img src="http://upload.wikimedia.org/wikipedia/commons/c/ce/Transparent.gif" alt="" id="xray">
+                      {% endif %}
+                    </div>
+                    <div class="content">
+                      <div class="icon">
+                        <i class="bx bx-image"></i>
+                      </div>
+                      <div class="text">
+                        No image chosen!
+                      </div>
+                    </div>
+                    <div id="cancel-btn">
+                      <i class="fas fa-times"></i>
+                    </div>
+                    <div class="file-name">
+                      File name here
+                    </div>
+                  </div>
+                  <div class="input">
+                  <form id="custom-btn" method="post" action="/" enctype="multipart/form-data">
+                    <dl>
+                      <p>
+                        <input type="file" id="file" accept="image/*" onchange="form.submit()" name="imagefile" class="form-control" autocomplete="off" required>
+                        <label for="file">
+                          Choose a x-ray
+                        </label>
+                      </p>
+                    </dl>
+                  </form>
+                  </div>
+                </div>
+
+                <div id="content3">
+                  <h3>Abnormal probability</h3>
+                  <div class="progress-container">
+                    {% if prediction1 %}
+                          <div class="progress-bar progress-bar--lg-offset progress-bar--aligned-values" data-effect="3" data-value={{prediction1}} data-disease="Cardiomegaly"></div>
+                    {% else %}
+                          <div class="progress-bar progress-bar--lg-offset progress-bar--aligned-values" data-effect="3" data-value=0 data-disease="Cardiomegaly"></div>
+                    {% endif %}
+
+                    {% if prediction2 %}
+                          <div class="progress-bar progress-bar--lg-offset progress-bar--aligned-values" data-effect="3" data-value={{prediction2}} data-disease="Emphysema"></div>
+                    {% else %}
+                          <div class="progress-bar progress-bar--lg-offset progress-bar--aligned-values" data-effect="3" data-value=0 data-disease="Emphysema"></div>
+                    {% endif %}
+
+                    {% if prediction3 %}
+                          <div class="progress-bar progress-bar--lg-offset progress-bar--aligned-values" data-effect="3" data-value={{prediction3}} data-disease="Mass"></div>
+                    {% else %}
+                          <div class="progress-bar progress-bar--lg-offset progress-bar--aligned-values" data-effect="3" data-value=0 data-disease="Mass"></div>
+                    {% endif %}
+
+                    {% if prediction4 %}
+                          <div class="progress-bar progress-bar--lg-offset progress-bar--aligned-values" data-effect="3" data-value={{prediction4}} data-disease="Atelectasis"></div>
+                    {% else %}
+                          <div class="progress-bar progress-bar--lg-offset progress-bar--aligned-values" data-effect="3" data-value=0 data-disease="Atelectasis"></div>
+                    {% endif %}
+
+                    {% if prediction5 %}
+                          <div class="progress-bar progress-bar--lg-offset progress-bar--aligned-values" data-effect="3" data-value={{prediction5}} data-disease="Pneumothorax"></div>
+                    {% else %}
+                          <div class="progress-bar progress-bar--lg-offset progress-bar--aligned-values" data-effect="3" data-value=0 data-disease="Pneumothorax"></div>
+                    {% endif %}
+
+                    {% if prediction6 %}
+                          <div class="progress-bar progress-bar--lg-offset progress-bar--aligned-values" data-effect="3" data-value={{prediction6}} data-disease="Edema"></div>
+                    {% else %}
+                          <div class="progress-bar progress-bar--lg-offset progress-bar--aligned-values" data-effect="3" data-value=0 data-disease="Edema"></div>
+                    {% endif %}
+                  </div>
+                </div>
+            </div>
+          </div>
+        <script src="{{url_for('static', filename='javascript/script.js')}}"></script>
+    </body>
+</html>
