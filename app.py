@@ -5,13 +5,10 @@ import pandas as pd
 import tensorflow as tf
 
 from flask import Flask, request, render_template, redirect, url_for
-from keras.preprocessing.image import ImageDataGenerator
 from keras.applications.densenet import DenseNet121
 from keras.layers import GlobalAveragePooling2D, Dense
 from keras.models import Model
 
-from sklearn.metrics import classification_report
-from sklearn.metrics import roc_auc_score, roc_curve
 from werkzeug.utils import secure_filename
 
 import random
@@ -38,7 +35,6 @@ labels = ['Cardiomegaly',
 
 
 random.seed(a=None, version=2)
-
 
 def get_mean_std_per_batch(image_path, df, h=320, w=320):
     sample_data = []
@@ -67,48 +63,8 @@ def load_image(img, image_dir, df, preprocess=True, h=320, w=320):
 
 train_df = pd.read_csv("train.csv")
 test_df = pd.read_csv("test.csv")
-image_dir = "/Users/eduardmagerusan/Downloads/images/"
+image_directory = 'static/uploads/'
 
-image_generator = ImageDataGenerator(
-    featurewise_center=True,
-    featurewise_std_normalization=True)
-
-train = image_generator.flow_from_dataframe(
-        dataframe=train_df,
-        directory=image_dir,
-        x_col="Image",
-        y_col=labels,
-        class_mode="raw",
-        batch_size=8,
-        shuffle=True,
-        seed=1,
-        target_size=(320, 320))
-
-raw_train_generator = ImageDataGenerator().flow_from_dataframe(
-    dataframe=train_df,
-    directory=image_dir,
-    x_col="Image",
-    y_col=labels,
-    class_mode="raw",
-    batch_size=100,
-    shuffle=True,
-    target_size=(320, 320))
-
-batch = raw_train_generator.next()
-data_sample = batch[0]
-
-image_generator.fit(data_sample)
-
-test = image_generator.flow_from_dataframe(
-    dataframe=test_df,
-    directory=image_dir,
-    x_col="Image",
-    y_col=labels,
-    class_mode="raw",
-    batch_size=8,
-    shuffle=False,
-    seed=1,
-    target_size=(320, 320))
 
 base_model = DenseNet121(weights='./models/densenet.hdf5',
                          include_top=False)
@@ -135,21 +91,9 @@ model.load_weights("./models/pretrained_model.h5")
 
 graph = tf.compat.v1.get_default_graph()
 
-predicted_vals = model.predict_generator(test, steps=len(test))
+dataframe = pd.read_csv("train.csv")
 
-pd.DataFrame(classification_report(test.labels, predicted_vals > 0.5, output_dict=True, target_names=labels))
-
-auc_roc_vals = []
-for i in range(len(labels)):
-    gt = test.labels[:, i]
-    pred = predicted_vals[:, i]
-    auc_roc = roc_auc_score(gt, pred)
-    auc_roc_vals.append(auc_roc)
-    fpr_rf, tpr_rf, _ = roc_curve(gt, pred)
-
-df = pd.read_csv("train.csv")
-
-labels_to_show = np.take(labels, np.argsort(auc_roc_vals)[::-1])[:6]
+labels_to_show = ['Cardiomegaly', 'Edema', 'Mass', 'Emphysema', 'Pneumothorax', 'Atelectasis']
 
 # generate_gradcam(model, '00000091_002.png', image_dir, df, labels, labels_to_show)
 # plt.show()
@@ -175,7 +119,7 @@ def predict():
     filename = secure_filename(imagefile.filename)
     imagefile.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-    preprocessed_input = load_image(imagefile.filename, image_dir, df)
+    preprocessed_input = load_image(imagefile.filename, image_directory, dataframe)
 
     with session.as_default():
         with graph.as_default():
@@ -190,6 +134,7 @@ def predict():
             label_list.append(f"{labels[i]}")
             # label = f"{labels[i]}"
             prediction_values.append(f"{predictions[0][i]*100:.1f}")
+            print(prediction_values)
             # prediction_value = f"{predictions[0][i]*100:.1f}"
 
     return render_template('index.html', filename=filename, prediction1=prediction_values[0],
