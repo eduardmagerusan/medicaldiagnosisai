@@ -36,12 +36,12 @@ labels = ['Cardiomegaly',
 
 random.seed(a=None, version=2)
 
+
 def get_mean_std_per_batch(image_path, df, h=320, w=320):
     sample_data = []
     for idx, img in enumerate(df.sample(100)["Image"].values):
         # path = image_dir + img
         sample_data.append(
-            # np.array(image.load_img(image_path, target_size=(H, W))))
             np.array(keras.utils.load_img(image_path, target_size=(h, w))))
 
     mean = np.mean(sample_data[0])
@@ -52,7 +52,6 @@ def get_mean_std_per_batch(image_path, df, h=320, w=320):
 def load_image(img, image_dir, df, preprocess=True, h=320, w=320):
     img_path = image_dir + img
     mean, std = get_mean_std_per_batch(img_path, df, h=h, w=w)
-    # x = image.load_img(img_path, target_size=(H, W))
     x = keras.utils.load_img(img_path, target_size=(h, w))
     if preprocess:
         x -= mean
@@ -95,8 +94,6 @@ dataframe = pd.read_csv("train.csv")
 
 labels_to_show = ['Cardiomegaly', 'Edema', 'Mass', 'Emphysema', 'Pneumothorax', 'Atelectasis']
 
-# generate_gradcam(model, '00000091_002.png', image_dir, df, labels, labels_to_show)
-# plt.show()
 
 UPLOAD_FOLDER = 'static/uploads/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -104,7 +101,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route('/display/<filename>')
 def display_image(filename):
-    # print('display_image filename: ' + filename)
     return redirect(url_for('static', filename='uploads/' + filename), code=301)
 
 
@@ -130,12 +126,8 @@ def predict():
     prediction_values = []
     for i in range(len(labels)):
         if labels[i] in labels_to_show:
-            print(f"Generating gradcam for class {labels[i]}")
             label_list.append(f"{labels[i]}")
-            # label = f"{labels[i]}"
             prediction_values.append(f"{predictions[0][i]*100:.1f}")
-            print(prediction_values)
-            # prediction_value = f"{predictions[0][i]*100:.1f}"
 
     return render_template('index.html', filename=filename, prediction1=prediction_values[0],
                            prediction2=prediction_values[1], prediction3=prediction_values[2],
