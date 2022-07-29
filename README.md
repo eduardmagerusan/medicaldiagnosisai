@@ -20,6 +20,14 @@ The model correctly predicts the mass and pneumothorax. We can also notice that 
 correctly highlights the area of interest. This visualization is useful for error analysis. We can notice if the model is indeed looking at the expected 
 area for making the prediction. 
 
+# WebApp
+![Bildschirmfoto 2022-07-28 um 18 13 58](https://user-images.githubusercontent.com/84686184/181587547-c9cd23ba-e93b-41a6-9417-9c017a696ba6.png)
+Setting up the Web-App Locally:
+1. Clone the Repository
+2. Install Requirements `pip install -r requirements.txt`
+3. To run the app on localhost run `python app.py`
+4. The app is running at `http://127.0.0.1:5000`
+
 # References
 - https://www.kaggle.com/code/redwankarimsony/nih-chest-x-ray8-classifier-cnn-visualization/notebook
 - https://github.com/LaurentVeyssier/Chest-X-Ray-Medical-Diagnosis-with-Deep-Learning
